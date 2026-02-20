@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { BookOpen, Users, Star, TrendingUp } from 'lucide-react';
 import { getAllCourses } from '../../services/courseService';
 import { getPopularCourses, getSimilarCourses } from '../../services/recommendationService';
- 
+import AdminContext from '../../context/AdminContext'; 
 import CourseCard from "../../components/CourseCard";
 
 function Home() {
