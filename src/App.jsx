@@ -1,15 +1,15 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AdminProvider } from './context/AdminContext'
-import ProtectedRoute from './context/ProtectedRoute'
+import { AdminProvider } from './context/AdminContext.jsx'
+import ProtectedRoute from './context/ProtectedRoute.jsx'
 import Login from './pages/Login.jsx'
-import Register from './pages/Register'
-import Admin from './Admin'
-import Home from './pages/admin/Home'
-import Courses from './pages/admin/courses'
-import Profile from './pages/admin/Profile'
+import Register from './pages/Register.jsx'
+import Admin from './Admin.jsx'
+import Home from './pages/admin/Home.jsx'
+import Courses from './pages/admin/courses.jsx'
+import Profile from './pages/admin/Profile.jsx'
 
-const Router = () => {
+const App = () => {
   return (
     <BrowserRouter>
       <AdminProvider>
@@ -36,4 +36,4 @@ const Router = () => {
   )
 }
 
-export default Router
+export default App

@@ -3,7 +3,7 @@ import { Plus, Edit, Trash2, X } from 'lucide-react';
 import Button from '../../components/Button';
 import SearchFilter from '../../components/SearchFilter';
 import { getAllCourses, addCourse, updateCourse, deleteCourse } from '../../services/courseService';
-import { AdminProvider } from '../../context/AdminContext';
+import  AdminContext  from '../../context/AdminContext';
 
 function Courses() {
 
