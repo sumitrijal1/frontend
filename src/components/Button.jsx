@@ -24,14 +24,18 @@ const Button = ({
   const widthClass = fullWidth ? 'btn-full' : ''
   const disabledClass = disabled ? 'btn-disabled' : ''
 
-  const combinedClassName = `
-    ${baseClass}
-    ${variantClass}
-    ${sizeClass}
-    ${widthClass}
-    ${disabledClass}
-    ${className}
-  `.trim()
+  // FIX: Use .filter(Boolean) to remove empty strings before joining,
+  // preventing multiple spaces in the final className string.
+  const combinedClassName = [
+    baseClass,
+    variantClass,
+    sizeClass,
+    widthClass,
+    disabledClass,
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <button
@@ -42,10 +46,10 @@ const Button = ({
       aria-disabled={disabled}
       {...props}
     >
-      
       {children}
     </button>
   )
 }
 
 export default Button
+

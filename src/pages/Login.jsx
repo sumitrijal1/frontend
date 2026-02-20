@@ -68,7 +68,7 @@ const Login = () => {
     setErrors({});
 
     try {
-      // simulate API delay
+      // Simulate API delay
       await new Promise(res => setTimeout(res, 800));
 
       // Demo authentication logic
@@ -92,10 +92,7 @@ const Login = () => {
         loginTime: new Date().toISOString()
       };
 
-      // ✅ FIX: no success check
       login(userData);
-
-      // 🚀 redirect
       navigate(from, { replace: true });
 
     } catch (error) {
@@ -189,7 +186,10 @@ const Login = () => {
             <p className="text-red-500 text-sm">{errors.password}</p>
           )}
 
-          <Button type="submit" disabled={isLoading}>
+          {/* FIX: Added fullWidth prop so the Button stretches full width like
+              the other elements in the form. Without it, the button is only as
+              wide as its content, breaking the form layout. */}
+          <Button type="submit" disabled={isLoading} fullWidth>
             {isLoading ? 'Signing In...' : 'Login'}
           </Button>
 
@@ -204,7 +204,7 @@ const Login = () => {
         </form>
 
         <p className="text-sm text-center mt-4">
-          Don’t have an account?{' '}
+          Don't have an account?{' '}
           <Link to="/register" className="text-blue-600">
             Register
           </Link>
@@ -216,3 +216,4 @@ const Login = () => {
 };
 
 export default Login;
+

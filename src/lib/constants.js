@@ -14,6 +14,14 @@ export const API_ENDPOINTS = {
     'Marketing',
     'Data Science'
   ];
+
+  // FIX: DIFFICULTY_LEVELS was used in SearchFilter.jsx but was never defined
+  // here, causing a ReferenceError. Added the missing constant.
+  export const DIFFICULTY_LEVELS = [
+    'Beginner',
+    'Intermediate',
+    'Advanced'
+  ];
   
   export const COURSE_PLATFORMS = [
     'Udemy',

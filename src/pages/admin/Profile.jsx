@@ -1,19 +1,21 @@
 import React, { useContext, useState } from 'react';
 import { User, Mail, Calendar, BookOpen } from 'lucide-react';
-
+// FIX: AdminContext was used via useContext but never imported.
+import AdminContext from '../../context/AdminContext';
 
 function Profile() {
+  // FIX: The original destructured `user` from context, but AdminContext
+  // exposes `admin`, not `user`. Corrected to `admin`.
+  const { admin, viewedCourses = [] } = useContext(AdminContext);
 
-  const { user, viewedCourses } = useContext(AdminContext);
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    bio: user?.bio || 'Passionate learner exploring new technologies and skills.'
+    name: admin?.name || '',
+    email: admin?.email || '',
+    bio: admin?.bio || 'Passionate learner exploring new technologies and skills.'
   });
 
   const handleSave = () => {
-
     console.log('Saving profile:', profileData);
     setIsEditing(false);
   };
@@ -32,7 +34,7 @@ function Profile() {
         <div className="flex items-center space-x-6 mb-8">
           {/* Avatar */}
           <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
+            {admin?.name?.charAt(0).toUpperCase() || 'U'}
           </div>
 
           {/* User info */}
@@ -45,7 +47,7 @@ function Profile() {
                 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 focus:outline-none mb-2"
               />
             ) : (
-              <h2 className="text-2xl font-bold text-gray-800">{user?.name}</h2>
+              <h2 className="text-2xl font-bold text-gray-800">{admin?.name}</h2>
             )}
             <p className="text-gray-600">Member since {new Date().getFullYear()}</p>
           </div>
@@ -74,7 +76,7 @@ function Profile() {
                   className="text-gray-800 border-b border-gray-300 focus:outline-none focus:border-blue-500"
                 />
               ) : (
-                <p className="text-gray-800">{user?.email}</p>
+                <p className="text-gray-800">{admin?.email}</p>
               )}
             </div>
           </div>
@@ -122,13 +124,11 @@ function Profile() {
         <h3 className="text-xl font-bold text-gray-800 mb-4">Learning Statistics</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Courses viewed */}
           <div className="bg-blue-50 rounded-lg p-4">
             <p className="text-blue-600 text-sm font-medium">Courses Viewed</p>
             <p className="text-3xl font-bold text-blue-700">{viewedCourses.length}</p>
           </div>
 
-          {/* Active days */}
           <div className="bg-green-50 rounded-lg p-4">
             <p className="text-green-600 text-sm font-medium">Active Days</p>
             <p className="text-3xl font-bold text-green-700">
@@ -136,7 +136,6 @@ function Profile() {
             </p>
           </div>
 
-          {/* Recommendations received */}
           <div className="bg-purple-50 rounded-lg p-4">
             <p className="text-purple-600 text-sm font-medium">AI Recommendations</p>
             <p className="text-3xl font-bold text-purple-700">

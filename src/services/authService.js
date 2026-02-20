@@ -1,4 +1,5 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const mockUsers = [
   {
     id: 1,
@@ -31,6 +32,7 @@ const authService = {
         throw new Error("Invalid credentials");
       }
 
+      // Omit password from the returned user object
       const { password: _, ...userWithoutPassword } = user;
       return {
         success: true,
@@ -82,10 +84,7 @@ const authService = {
   async logout() {
     try {
       await delay(300);
-
-      return {
-        success: true,
-      };
+      return { success: true };
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
       return {

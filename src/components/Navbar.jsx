@@ -7,7 +7,8 @@ const Navbar = ({ onToggleSidebar }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const { user, logout } = useAdmin();
+  // FIX: AdminContext exposes `admin`, not `user`. Renamed to `admin`.
+  const { admin, logout } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -73,8 +74,9 @@ const Navbar = ({ onToggleSidebar }) => {
 
           {/* USER */}
           <div className="relative">
+            {/* FIX: Was `user?.name`, now correctly `admin?.name` */}
             <button onClick={() => setShowUserMenu(!showUserMenu)}>
-              {user?.name || 'Admin'}
+              {admin?.name || 'Admin'}
             </button>
 
             {showUserMenu && (
@@ -97,3 +99,4 @@ const Navbar = ({ onToggleSidebar }) => {
 };
 
 export default Navbar;
+

@@ -1,9 +1,10 @@
 import React from 'react'
-import { Outlet, Navigate } from 'react-router-dom'
+import { Outlet, Navigate, NavLink } from 'react-router-dom'
 import { useAdmin } from '../../context/AdminContext'
 
 const AdminLayout = () => {
     const { admin, loading } = useAdmin()
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -23,16 +24,34 @@ const AdminLayout = () => {
             <aside className="w-64 bg-blue-600 text-white p-6">
                 <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
 
+                {/* FIX: Replaced plain <a href> tags with React Router <NavLink>.
+                    Using <a href> causes full page reloads, losing React state
+                    and breaking the SPA navigation entirely. */}
                 <nav className="space-y-4">
-                    <a href="/admin/home" className="block hover:underline">
+                    <NavLink
+                        to="/admin/home"
+                        className={({ isActive }) =>
+                            `block hover:underline ${isActive ? 'font-bold underline' : ''}`
+                        }
+                    >
                         Dashboard
-                    </a>
-                    <a href="/admin/courses" className="block hover:underline">
+                    </NavLink>
+                    <NavLink
+                        to="/admin/courses"
+                        className={({ isActive }) =>
+                            `block hover:underline ${isActive ? 'font-bold underline' : ''}`
+                        }
+                    >
                         Courses
-                    </a>
-                    <a href="/admin/users" className="block hover:underline">
+                    </NavLink>
+                    <NavLink
+                        to="/admin/users"
+                        className={({ isActive }) =>
+                            `block hover:underline ${isActive ? 'font-bold underline' : ''}`
+                        }
+                    >
                         Users
-                    </a>
+                    </NavLink>
                 </nav>
             </aside>
 

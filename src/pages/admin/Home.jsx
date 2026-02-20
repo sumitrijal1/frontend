@@ -2,14 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { BookOpen, Users, Star, TrendingUp } from 'lucide-react';
 import { getAllCourses } from '../../services/courseService';
 import { getPopularCourses, getSimilarCourses } from '../../services/recommendationService';
-import AdminContext from '../../context/AdminContext'; 
-import CourseCard from "../../components/CourseCard";
+import AdminContext from '../../context/AdminContext';
+import CourseCard from '../../components/CourseCard';
 
 function Home() {
 
   const [courses, setCourses] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // FIX: Destructure `viewedCourses` safely with a default of [].
+  // The original code already did this correctly, but AdminContext was not
+  // providing viewedCourses — fixed in AdminContext.jsx.
   const { viewedCourses = [] } = useContext(AdminContext);
 
   useEffect(() => {
@@ -35,7 +39,6 @@ function Home() {
   const generateRecommendations = async (allCourses) => {
     const results = [];
 
-    // Step 1: Popular courses
     const popular = await getPopularCourses(allCourses);
     popular.slice(0, 2).forEach(course => {
       results.push({
@@ -78,9 +81,7 @@ function Home() {
 
   const avgRating =
     courses.length > 0
-      ? (
-          courses.reduce((sum, c) => sum + c.rating, 0) / courses.length
-        ).toFixed(1)
+      ? (courses.reduce((sum, c) => sum + c.rating, 0) / courses.length).toFixed(1)
       : 0;
 
   const stats = {
@@ -114,9 +115,7 @@ function Home() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Total Courses</p>
-              <p className="text-3xl font-bold text-gray-800">
-                {stats.totalCourses}
-              </p>
+              <p className="text-3xl font-bold text-gray-800">{stats.totalCourses}</p>
             </div>
             <BookOpen className="w-12 h-12 text-blue-500" />
           </div>
@@ -138,9 +137,7 @@ function Home() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Average Rating</p>
-              <p className="text-3xl font-bold text-gray-800">
-                {stats.avgRating}
-              </p>
+              <p className="text-3xl font-bold text-gray-800">{stats.avgRating}</p>
             </div>
             <Star className="w-12 h-12 text-yellow-500" />
           </div>
@@ -150,9 +147,7 @@ function Home() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">AI Recommendations</p>
-              <p className="text-3xl font-bold text-gray-800">
-                {stats.recommendations}
-              </p>
+              <p className="text-3xl font-bold text-gray-800">{stats.recommendations}</p>
             </div>
             <TrendingUp className="w-12 h-12 text-purple-500" />
           </div>
@@ -175,10 +170,8 @@ function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommendations.map((rec, index) => (
             <div key={index}>
-              <CourseCard course={rec.course} />
-              <p className="text-sm text-gray-500 mt-2">
-                {rec.reason}
-              </p>
+              <CourseCard course={rec.course} showActions={false} />
+              <p className="text-sm text-gray-500 mt-2">{rec.reason}</p>
             </div>
           ))}
         </div>

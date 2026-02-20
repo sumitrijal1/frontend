@@ -6,7 +6,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Admin from './Admin.jsx'
 import Home from './pages/admin/Home.jsx'
-import Courses from './pages/admin/courses.jsx'
+import Courses from './pages/admin/Courses.jsx'
 import Profile from './pages/admin/Profile.jsx'
 
 const App = () => {

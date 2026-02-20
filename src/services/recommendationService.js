@@ -26,23 +26,14 @@ export async function getSimilarCourses(courseId, allCourses) {
       similarityScore: calculateSimilarity(referenceCourse, course),
     }));
 
-  const sorted = coursesWithScores.sort(
-    (a, b) => b.similarityScore - a.similarityScore
-  );
-
-  return sorted;
+  return coursesWithScores.sort((a, b) => b.similarityScore - a.similarityScore);
 }
 
 function calculateSimilarity(course1, course2) {
   let score = 0;
 
-  if (course1.category === course2.category) {
-    score += 40;
-  }
-
-  if (course1.platform === course2.platform) {
-    score += 20;
-  }
+  if (course1.category === course2.category) score += 40;
+  if (course1.platform === course2.platform) score += 20;
 
   const ratingDiff = Math.abs(course1.rating - course2.rating);
   score += Math.max(0, 20 - ratingDiff * 10);
@@ -51,52 +42,44 @@ function calculateSimilarity(course1, course2) {
     const commonKeywords = course1.keywords.filter((k) =>
       course2.keywords.includes(k)
     );
-    score +=
-      (commonKeywords.length / Math.max(course1.keywords.length, 1)) * 20;
+    score += (commonKeywords.length / Math.max(course1.keywords.length, 1)) * 20;
   }
+
   return Math.min(100, Math.round(score));
 }
 
 function calculatePopularityScore(course, topCourse) {
   const enrollmentRatio = course.enrollments / topCourse.enrollments;
-
   const ratingFactor = course.rating / 5;
-
   const score = (enrollmentRatio * 0.7 + ratingFactor * 0.3) * 100;
-
   return Math.round(score);
 }
 
-export async function getPersonalizedRecommendations(
-  viewedCourseIds,
-  allCourses
-) {
+export async function getPersonalizedRecommendations(viewedCourseIds, allCourses) {
   await delay(1000);
 
   if (viewedCourseIds.length === 0) {
     return getPopularCourses(allCourses);
   }
 
-  const viewedCourses = allCourses.filter((c) =>
-    viewedCourseIds.includes(c.id)
-  );
+  const viewedCourses = allCourses.filter((c) => viewedCourseIds.includes(c.id));
 
   const categoryCount = {};
   viewedCourses.forEach((course) => {
     categoryCount[course.category] = (categoryCount[course.category] || 0) + 1;
   });
+
   const preferredCategory = Object.keys(categoryCount).reduce((a, b) =>
     categoryCount[a] > categoryCount[b] ? a : b
   );
 
-  const recommendations = allCourses
+  return allCourses
     .filter((c) => !viewedCourseIds.includes(c.id))
     .filter((c) => c.category === preferredCategory)
     .map((course) => ({
       ...course,
-      similarityScore: 85 + Math.floor(Math.random() * 15), // 85-100
+      similarityScore: 85 + Math.floor(Math.random() * 15),
     }))
     .sort((a, b) => b.rating - a.rating);
-
-  return recommendations;
 }
+

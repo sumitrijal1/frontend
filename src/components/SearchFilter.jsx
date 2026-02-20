@@ -1,11 +1,13 @@
 import React from 'react'
-import { COURSE_CATEGORIES} from '../lib/constants'
+// FIX: Added DIFFICULTY_LEVELS to the import — it was used but never imported,
+// causing a ReferenceError at runtime.
+import { COURSE_CATEGORIES, DIFFICULTY_LEVELS } from '../lib/constants'
 
 /**
  * Search and Filter Component
  * Provides search and filtering functionality for courses
  */
-const SearchFilter = ({ filters, onFilterChange, onSearch }) => {
+const SearchFilter = ({ filters = {}, onFilterChange, onSearch }) => {
   const handleSearchChange = (e) => {
     onSearch(e.target.value)
   }

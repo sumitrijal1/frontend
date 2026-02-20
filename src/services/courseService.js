@@ -7,8 +7,7 @@ let mockCourses = [
     category: "Programming",
     rating: 4.6,
     enrollments: 125000,
-    description:
-      "Learn Python from scratch with hands-on projects and exercises.",
+    description: "Learn Python from scratch with hands-on projects and exercises.",
     keywords: ["python", "programming", "backend"],
     similarityScore: 95,
   },
@@ -30,8 +29,7 @@ let mockCourses = [
     category: "Design",
     rating: 4.5,
     enrollments: 67000,
-    description:
-      "Learn the principles of user interface and user experience design.",
+    description: "Learn the principles of user interface and user experience design.",
     keywords: ["design", "ui", "ux", "figma"],
     similarityScore: 88,
   },
@@ -53,8 +51,7 @@ let mockCourses = [
     category: "Data Science",
     rating: 4.8,
     enrollments: 156000,
-    description:
-      "Hands-on Python & R in data science with real-world projects.",
+    description: "Hands-on Python & R in data science with real-world projects.",
     keywords: ["machine learning", "python", "data science"],
     similarityScore: 94,
   },
@@ -98,8 +95,7 @@ let mockCourses = [
     category: "Data Science",
     rating: 4.7,
     enrollments: 92000,
-    description:
-      "Complete data science course with pandas, numpy, and visualization.",
+    description: "Complete data science course with pandas, numpy, and visualization.",
     keywords: ["data science", "python", "analytics"],
     similarityScore: 93,
   },
@@ -110,8 +106,7 @@ let mockCourses = [
     category: "Programming",
     rating: 4.8,
     enrollments: 143000,
-    description:
-      "Full-stack web development with HTML, CSS, JavaScript, Node, and React.",
+    description: "Full-stack web development with HTML, CSS, JavaScript, Node, and React.",
     keywords: ["web development", "fullstack", "javascript"],
     similarityScore: 96,
   },
@@ -142,7 +137,7 @@ export async function addCourse(courseData) {
     id: newId,
     ...courseData,
     keywords: courseData.title.toLowerCase().split(" ").slice(0, 3),
-    similarityScore: Math.floor(Math.random() * 20) + 80, // Random 80-100
+    similarityScore: Math.floor(Math.random() * 20) + 80,
   };
 
   mockCourses.push(newCourse);

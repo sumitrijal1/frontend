@@ -3,14 +3,19 @@ import { Plus, Edit, Trash2, X } from 'lucide-react';
 import Button from '../../components/Button';
 import SearchFilter from '../../components/SearchFilter';
 import { getAllCourses, addCourse, updateCourse, deleteCourse } from '../../services/courseService';
-import  AdminContext  from '../../context/AdminContext';
+import AdminContext from '../../context/AdminContext';
 
 function Courses() {
 
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  // FIX: SearchFilter expects a `filters` object with category/level/status,
+  // but the original code only tracked `selectedCategory` as a plain string.
+  // Unified into a single filters object that matches what SearchFilter sends.
+  const [filters, setFilters] = useState({ category: 'All', level: 'All', status: 'All', search: '' });
+
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
@@ -28,7 +33,7 @@ function Courses() {
 
   useEffect(() => { loadCourses(); }, []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { filterCourses(); }, [searchTerm, selectedCategory, courses]);
+  useEffect(() => { filterCourses(); }, [searchTerm, filters, courses]);
 
   const loadCourses = async () => {
     setLoading(true);
@@ -44,13 +49,29 @@ function Courses() {
 
   const filterCourses = () => {
     let filtered = courses;
-    if (selectedCategory !== 'All') filtered = filtered.filter(c => c.category === selectedCategory);
-    if (searchTerm) {
+
+    if (filters.category && filters.category !== 'All') {
+      filtered = filtered.filter(c => c.category === filters.category);
+    }
+
+    // FIX: Apply level filter (was not implemented at all).
+    if (filters.level && filters.level !== 'All') {
+      filtered = filtered.filter(c => c.level === filters.level);
+    }
+
+    // FIX: Apply status filter (was not implemented at all).
+    if (filters.status && filters.status !== 'All') {
+      filtered = filtered.filter(c => c.status === filters.status);
+    }
+
+    const term = (filters.search || searchTerm || '').toLowerCase();
+    if (term) {
       filtered = filtered.filter(c =>
-        c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.platform.toLowerCase().includes(searchTerm.toLowerCase())
+        c.title.toLowerCase().includes(term) ||
+        (c.platform && c.platform.toLowerCase().includes(term))
       );
     }
+
     setFilteredCourses(filtered);
   };
 
@@ -106,12 +127,24 @@ function Courses() {
     }
   };
 
-  const handleCourseClick = (courseId) => addViewedCourse(courseId);
+  const handleCourseClick = (courseId) => {
+    // FIX: addViewedCourse was called but AdminContext never provided it.
+    // Now that it's fixed in AdminContext, this call will work correctly.
+    if (addViewedCourse) addViewedCourse(courseId);
+  };
 
-  const handleSearch = (term) => setSearchTerm(term);
-  const handleFilter = (category) => setSelectedCategory(category);
+  // FIX: SearchFilter's onSearch passes a string; update both searchTerm state
+  // and the search field inside the filters object.
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setFilters(prev => ({ ...prev, search: term }));
+  };
 
-  const categories = ['All', ...new Set(courses.map(c => c.category))];
+  // FIX: SearchFilter's onFilterChange passes a full filter object, not just a
+  // category string. The original handler `handleFilter` accepted a raw string.
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -128,18 +161,18 @@ function Courses() {
           <p className="text-gray-600 mt-2">Browse and manage available courses</p>
         </div>
 
-        {/* Reusable Button for Add Course */}
         <Button onClick={handleAdd} variant="primary" className="flex items-center space-x-2">
           <Plus className="w-5 h-5" />
           <span>Add Course</span>
         </Button>
       </div>
 
-      {/* Search and Filter Section */}
+      {/* FIX: Pass `filters` prop and corrected callback names to match
+          what SearchFilter actually expects. */}
       <SearchFilter
+        filters={filters}
         onSearch={handleSearch}
-        onFilterChange={handleFilter}
-        categories={categories} // pass categories for dropdown if your component uses it
+        onFilterChange={handleFilterChange}
       />
 
       {/* Courses grid */}
@@ -197,8 +230,76 @@ function Courses() {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {/* Form fields */}
-              {/* Submit buttons */}
+              {/* FIX: Form fields were completely empty in the original —
+                  the modal opened but had no inputs, making Add/Edit useless. */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full p-3 border rounded"
+                  placeholder="Course title"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                <input
+                  type="text"
+                  value={formData.platform}
+                  onChange={(e) => setFormData(prev => ({ ...prev, platform: e.target.value }))}
+                  className="w-full p-3 border rounded"
+                  placeholder="e.g. Udemy, Coursera"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full p-3 border rounded"
+                >
+                  <option value="Programming">Programming</option>
+                  <option value="Design">Design</option>
+                  <option value="Business">Business</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Data Science">Data Science</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rating (0–5)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={formData.rating}
+                  onChange={(e) => setFormData(prev => ({ ...prev, rating: parseFloat(e.target.value) }))}
+                  className="w-full p-3 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Enrollments</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.enrollments}
+                  onChange={(e) => setFormData(prev => ({ ...prev, enrollments: parseInt(e.target.value, 10) }))}
+                  className="w-full p-3 border rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full p-3 border rounded"
+                  rows={3}
+                  placeholder="Course description"
+                />
+              </div>
+
               <div className="flex space-x-4">
                 <Button type="submit" variant="primary" className="flex-1">
                   {editingCourse ? 'Update Course' : 'Add Course'}

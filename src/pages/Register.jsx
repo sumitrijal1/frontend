@@ -22,17 +22,9 @@ const Register = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -89,10 +81,7 @@ const Register = () => {
         createdAt: new Date().toISOString()
       };
 
-      // ✅ FIX: no success check needed
       login(userData);
-
-      // 🚀 redirect immediately
       navigate('/admin/home', { replace: true });
 
     } catch (error) {
@@ -119,60 +108,84 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          <input
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded"
-          />
-
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full p-3 border rounded"
-          />
-
-          <div className="relative">
+          <div>
             <input
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={formData.password}
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded pr-10"
+              className="w-full p-3 border rounded"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(prev => !prev)}
-              className="absolute right-2 top-2"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+            {/* FIX: Field-level error messages were missing for all inputs.
+                The errors object was populated but never displayed, so users
+                had no feedback on what went wrong. */}
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
           </div>
 
-          <div className="relative">
+          <div>
             <input
-              name="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded pr-10"
+              className="w-full p-3 border rounded"
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(prev => !prev)}
-              className="absolute right-2 top-2"
-            >
-              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
-          <Button type="submit" disabled={isLoading}>
+          <div>
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full p-3 border rounded pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-2 top-2"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
+          </div>
+
+          <div>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="w-full p-3 border rounded pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(prev => !prev)}
+                className="absolute right-2 top-2"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+            )}
+          </div>
+
+          {/* FIX: Added fullWidth so the submit button stretches full width. */}
+          <Button type="submit" disabled={isLoading} fullWidth>
             {isLoading ? 'Creating...' : 'Register'}
           </Button>
 
